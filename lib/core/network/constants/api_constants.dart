@@ -1,8 +1,9 @@
 class ApiConstants {
   /// [Base Configuration]
   // static const String baseDomain = 'https://karlfive223-backend.onrender.com';
-  // static const String baseDomain = 'http://72.61.161.196';
-  static const String baseDomain = 'https://api.centralpadelleague.com';
+  static const String baseDomain = 'http://72.61.161.196:5003';
+  // static const String baseDomain = 'http://10.10.5.67:5002';
+  // static const String baseDomain = 'https://api.centralpadelleague.com';
 
   static const String baseUrl = '$baseDomain/api/v1';
 
@@ -28,7 +29,7 @@ class ApiConstants {
   static ContactEndpoints get contact => ContactEndpoints();
   static NotificationEndpoints get notification => NotificationEndpoints();
   static ReportEndpoints get report => ReportEndpoints();
-
+  static EventEndpoints get event => EventEndpoints();
 
   static get team => null;
 
@@ -53,6 +54,8 @@ class UserEndpoints {
   final String updateProfile = '$_base/update-profile';
   final String getUserProfile = '$_base/profile';
 
+  String deleteAccount(String userId) => '$_base/$userId';
+
   // final String create = '$_base/create';
 }
 
@@ -60,7 +63,8 @@ class NotificationEndpoints {
   static const String _base = '${ApiConstants.baseUrl}/notification';
 
   final String getnotifications = '$_base/getnotifications';
-  
+  final String markAllAsRead = '$_base/mark-all-as-read';
+
   String getNotificationsByUserId(String userId) => '$_base/$userId';
 }
 
@@ -79,4 +83,14 @@ class ReportEndpoints {
   final String getReports = '$_base/all';
 }
 
+class EventEndpoints {
+  static const String _base = '${ApiConstants.baseUrl}/event';
 
+  final String getAllEvents = '$_base/all';
+
+  final String createEvent = '$_base/create';
+
+  String approveEvent(String eventId) => '$_base/approve/$eventId';
+
+  String rejectEvent(String eventId) => '$_base/decline/$eventId';
+}
