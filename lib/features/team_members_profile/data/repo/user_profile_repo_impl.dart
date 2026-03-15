@@ -13,7 +13,16 @@ class UserProfileRepoImpl implements UserProfileRepo {
   NetworkResult<UserProfileModel> getProfile() {
     return _apiClient.get<UserProfileModel>(
       ApiConstants.user.getUserProfile,
-      fromJsonT: (json) => UserProfileModel.fromJson(json as Map<String, dynamic>),
+      fromJsonT: (json) =>
+          UserProfileModel.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  NetworkResult<Map<String, dynamic>> deleteAccount(String userId) {
+    return _apiClient.delete<Map<String, dynamic>>(
+      ApiConstants.user.deleteAccount(userId),
+      fromJsonT: (json) => json as Map<String, dynamic>,
     );
   }
 }

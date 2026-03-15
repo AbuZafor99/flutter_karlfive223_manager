@@ -3,4 +3,5 @@ import '../../data/models/user_profile_model.dart';
 
 abstract class UserProfileRepo {
   NetworkResult<UserProfileModel> getProfile();
+  NetworkResult<Map<String, dynamic>> deleteAccount(String userId);
 }
