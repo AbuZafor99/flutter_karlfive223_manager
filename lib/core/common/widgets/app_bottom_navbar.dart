@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/network/api_client.dart';
+import '../../../core/network/services/auth_storage_service.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../features/events/presentation/screens/manage_events_screen.dart';
 import '../../../features/home/presentation/screens/home_screen.dart';
 import '../../../features/league/presentation/screens/leagues_screen.dart';
 import '../../../features/notification/presentation/screen/notification_screen.dart';
@@ -117,6 +119,12 @@ class AppBottomNavBar extends StatelessWidget {
                 duration: const Duration(milliseconds: 50),
               );
             } else if (index == 3) {
+              Get.offAll(
+                () => const ManageEventsScreen(),
+                transition: Transition.fadeIn,
+                duration: const Duration(milliseconds: 50),
+              );
+            } else if (index == 4) {
               // Create a default (neutral) team member model for the profile.
               // Avoid injecting static placeholders like 'User'/'Profile' which
               // can be saved back to the server when the user edits only one
@@ -150,7 +158,10 @@ class AppBottomNavBar extends StatelessWidget {
               }
               if (!Get.isRegistered<ProfileController>()) {
                 Get.put(
-                  ProfileController(repository: Get.find<UserProfileRepoImpl>()),
+                  ProfileController(
+                    repository: Get.find<UserProfileRepoImpl>(),
+                    authStorageService: Get.find<AuthStorageService>(),
+                  ),
                   permanent: true,
                 );
               }
@@ -173,12 +184,11 @@ class AppBottomNavBar extends StatelessWidget {
 
               // Finally navigate
               Get.offAll(
-                    () => ProfileInfoScreen(member: defaultMember),
+                () => ProfileInfoScreen(member: defaultMember),
                 transition: Transition.fadeIn,
                 duration: const Duration(milliseconds: 50),
               );
             }
-
           },
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -220,6 +230,15 @@ class AppBottomNavBar extends StatelessWidget {
             BottomNavigationBarItem(
               icon: _buildNavItem(
                 index: 3,
+                icon: "assets/icons/notifi.png",
+                activeIcon: "assets/icons/notifi.png",
+                label: "Events",
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavItem(
+                index: 4,
                 icon: "assets/images/nav_prof_off.png",
                 activeIcon: "assets/images/nav_prof_on.png",
                 label: "Profile",
