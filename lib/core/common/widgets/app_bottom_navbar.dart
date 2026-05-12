@@ -7,7 +7,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../features/events/presentation/screens/manage_events_screen.dart';
 import '../../../features/home/presentation/screens/home_screen.dart';
 import '../../../features/league/presentation/screens/leagues_screen.dart';
-import '../../../features/notification/presentation/screen/notification_screen.dart';
 import '../../../features/team_details/data/repo/team_repo_impl.dart';
 import '../../../features/team_details/presentation/controllers/team_controller.dart';
 import '../../../features/team_members_profile/data/models/team_member_model.dart';
@@ -16,6 +15,7 @@ import '../../../features/team_members_profile/data/repo/user_profile_repo_impl.
 import '../../../features/team_members_profile/presentation/controllers/contact_us_controller.dart';
 import '../../../features/team_members_profile/presentation/controllers/profile_controller.dart';
 import '../../../features/team_members_profile/presentation/screens/profile_info_screen.dart';
+import '../../../features/team_members_profile/presentation/screens/user_notification_manage_screen.dart';
 
 // Create a GetX controller for navigation
 class BottomNavController extends GetxController {
@@ -114,7 +114,7 @@ class AppBottomNavBar extends StatelessWidget {
               );
             } else if (index == 2) {
               Get.offAll(
-                () => NotificationScreen(),
+                () => const UserNotificationManageScreen(),
                 transition: Transition.fadeIn,
                 duration: const Duration(milliseconds: 50),
               );
@@ -221,9 +221,9 @@ class AppBottomNavBar extends StatelessWidget {
             BottomNavigationBarItem(
               icon: _buildNavItem(
                 index: 2,
-                icon: "assets/icons/notifi.png",
-                activeIcon: "assets/icons/notifi.png",
-                label: "Notification",
+                icon: "assets/images/nav_prof_off.png",
+                activeIcon: "assets/images/nav_prof_on.png",
+                label: "Users",
               ),
               label: '',
             ),

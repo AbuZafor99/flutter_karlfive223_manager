@@ -82,10 +82,7 @@ class ShimmerTextLine extends StatelessWidget {
 class ShimmerCircle extends StatelessWidget {
   final double size;
 
-  const ShimmerCircle({
-    super.key,
-    this.size = 40,
-  });
+  const ShimmerCircle({super.key, this.size = 40});
 
   @override
   Widget build(BuildContext context) {
@@ -131,9 +128,7 @@ class LeagueUpdateShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth < 400 ? 12 : 24,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -150,6 +145,85 @@ class LeagueUpdateShimmer extends StatelessWidget {
   }
 }
 
+/// Shimmer for income graph section
+class IncomeGraphShimmer extends StatelessWidget {
+  const IncomeGraphShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerTextLine(width: 160, height: 22),
+          const SizedBox(height: 12),
+          ShimmerBox(
+            width: double.infinity,
+            height: 300,
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shimmer for category-wise subscription breakdown card
+class IncomeCategoryBreakdownShimmer extends StatelessWidget {
+  const IncomeCategoryBreakdownShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerTextLine(width: 220, height: 20),
+          const SizedBox(height: 12),
+          ShimmerBox(
+            width: double.infinity,
+            height: 430,
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shimmer for Home KPI cards grid
+class HomeKpiCardsShimmer extends StatelessWidget {
+  const HomeKpiCardsShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
+      child: GridView.count(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        childAspectRatio: 1.45,
+        children: List.generate(
+          4,
+          (_) => ShimmerBox(
+            width: double.infinity,
+            height: 130,
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Shimmer for next match widget
 class NextMatchShimmer extends StatelessWidget {
   const NextMatchShimmer({super.key});
@@ -158,9 +232,7 @@ class NextMatchShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth < 400 ? 12 : 24,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -185,9 +257,7 @@ class QuickStatsShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth < 350 ? 12 : 24,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 350 ? 12 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -201,7 +271,10 @@ class QuickStatsShimmer extends StatelessWidget {
             ),
             child: Row(
               children: const [
-                Expanded(flex: 3, child: ShimmerTextLine(width: 60, height: 14)),
+                Expanded(
+                  flex: 3,
+                  child: ShimmerTextLine(width: 60, height: 14),
+                ),
                 Expanded(child: ShimmerTextLine(width: 30, height: 14)),
                 Expanded(child: ShimmerTextLine(width: 30, height: 14)),
                 Expanded(child: ShimmerTextLine(width: 30, height: 14)),
@@ -254,9 +327,7 @@ class FixturesShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth < 400 ? 12 : 24,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -269,6 +340,37 @@ class FixturesShimmer extends StatelessWidget {
               child: ShimmerBox(
                 width: double.infinity,
                 height: 80,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shimmer for referral summary list
+class ReferralSummaryShimmer extends StatelessWidget {
+  const ReferralSummaryShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 400 ? 12 : 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerTextLine(width: 150, height: 18),
+          const SizedBox(height: 12),
+          ...List.generate(
+            4,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: ShimmerBox(
+                width: double.infinity,
+                height: 44,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),

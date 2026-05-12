@@ -5,7 +5,9 @@ import '../../league/models/match_model.dart' as league_match;
 import '../../league/models/standing_model.dart';
 import '../data/home_repository.dart';
 import '../models/match_model.dart';
+import '../models/payment_income_model.dart';
 import '../models/player_model.dart';
+import '../models/referral_summary_model.dart';
 import '../models/team_model.dart';
 // league models imported on demand where required
 
@@ -40,6 +42,10 @@ class HomeController extends GetxController {
 
   var quickStats = [].obs;
   var fixtures = <Match>[].obs;
+  var referralSummaries = <ReferralSummary>[].obs;
+  var incomeData = Rxn<PaymentIncomeResponse>();
+  var incomeCategoryData = Rxn<PaymentIncomeCategoryWiseResponse>();
+  var paymentKpiData = Rxn<PaymentKpiResponse>();
   // Keep the original league match objects so we can show full fixtures screen
   var leagueMatches = <league_match.Match>[].obs;
 
@@ -63,7 +69,7 @@ class HomeController extends GetxController {
 
   Future<void> fetchHomeData() async {
     isLoading.value = true;
-    
+
     // Load user profile first so UI can greet the user. Only use the service
     // if it was registered during app startup to avoid Get.find exceptions.
     try {
@@ -97,48 +103,72 @@ class HomeController extends GetxController {
         }
       });
 
-      //* Standings (quick stats)
-      final standingsResult = await repository.getAllStandings();
-      standingsResult.fold((failure) {}, (success) {
-        final sdata = success.data;
-        if (sdata.isNotEmpty) {
-          // keep full standings for See All
-          standingsList.assignAll(sdata);
+      //* Referral summary
+      final referralsResult = await repository.getReferralSummaries();
+      referralsResult.fold(
+        (failure) {
+          referralSummaries.clear();
+        },
+        (success) {
+          referralSummaries.assignAll(success.data);
+        },
+      );
 
-          //* pick two recent standings for quick view
-          final two = sdata
-              .take(2)
-              .map(
-                (s) => {
-                  'name': s.teamName,
-                  'GP': s.played,
-                  'W': s.won,
-                  'L': s.lost,
-                  'Pts': s.points,
-                  '+/-': s.goalDifference,
-                },
-              )
-              .toList();
-          quickStats.assignAll(two);
-        }
-      });
+      //* Income graph data (day/month)
+      final incomeResult = await repository.getIncomeDayMonth();
+      incomeResult.fold(
+        (failure) {
+          incomeData.value = null;
+        },
+        (success) {
+          incomeData.value = success.data;
+        },
+      );
 
-      //* League Update
-      final leaguesResult = await repository.getAllLeagues();
-      leaguesResult.fold((failure) {}, (success) {
-        final ldata = success.data;
-        if (ldata.isNotEmpty) {
-          final latest = ldata.first;
-          leagueName.value = latest.leagueName;
-          seasonDates.value = '${latest.startDate} - ${latest.endDate}';
-          status.value = 'Ongoing';
-        }
-      });
+      //* Income category-wise breakdown
+      final incomeCategoryResult = await repository.getIncomeCategoryWise();
+      incomeCategoryResult.fold(
+        (failure) {
+          incomeCategoryData.value = null;
+        },
+        (success) {
+          incomeCategoryData.value = success.data;
+        },
+      );
+
+      //* KPI cards data
+      final kpiResult = await repository.getPaymentKpi();
+      kpiResult.fold(
+        (failure) {
+          paymentKpiData.value = null;
+        },
+        (success) {
+          paymentKpiData.value = success.data;
+        },
+      );
     } catch (e) {
       print('Error fetching home data: $e'); //! <-- Remove when in production
     }
 
     isLoading.value = false;
+  }
+
+  Future<bool> createReferralPerson(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
+      return false;
+    }
+
+    final result = await repository.createReferralPerson(trimmedName);
+    return result.fold(
+      (failure) {
+        return false;
+      },
+      (success) async {
+        await fetchHomeData();
+        return true;
+      },
+    );
   }
 
   /// Map API league match model to lightweight home Match model

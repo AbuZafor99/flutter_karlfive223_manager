@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/common/widgets/app_bottom_navbar.dart';
 import '../../../../core/common/widgets/app_scaffold.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/services/auth_storage_service.dart';
@@ -44,63 +43,71 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: AppColors.leagueBackgroundGrey,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+        ),
+        titleSpacing: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Notification',
+              style: TextStyle(
+                color: AppColors.primaryText,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Obx(() {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.notificationColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _controller.unreadCount.value.toString(),
+                  style: const TextStyle(
+                    color: AppColors.buttonText,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () => _controller.markAllAsRead(),
+            child: const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Center(
+                child: Text(
+                  'Mark All',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        "Notification",
-                        style: TextStyle(
-                          color: AppColors.primaryText,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Obx(() {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.notificationColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            _controller.unreadCount.value.toString(),
-                            style: const TextStyle(
-                              color: AppColors.buttonText,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () => _controller.markAllAsRead(),
-                    child: const Text(
-                      "Mark All",
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Notification List with RefreshIndicator
             Expanded(
               child: RefreshIndicator(
@@ -204,7 +211,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
   }
 

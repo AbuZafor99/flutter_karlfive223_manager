@@ -5,15 +5,17 @@ import 'package:get/get.dart';
 import '../../../../core/common/constants/app_images.dart';
 import '../../../../core/common/widgets/app_bottom_navbar.dart';
 import '../../../../core/common/widgets/shimmer_widgets.dart';
+import '../../../../core/network/api_client.dart';
+import '../../../../core/network/services/auth_storage_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../notification/data/repo/notification_repo_impl.dart';
+import '../../../notification/presentation/controller/notifi_dummy_controller.dart';
+import '../../../notification/presentation/screen/notification_screen.dart';
 import '../../controller/home_controller.dart';
-import '../widgets/custom_search_bar.dart';
-import '../widgets/fixtures_widget.dart';
-import '../widgets/game_reminder_widget.dart';
-import '../widgets/league_update_widget.dart';
-import '../widgets/next_match_widget.dart';
-import '../widgets/quick_stats_widget.dart';
-import '../widgets/search_results_widget.dart';
+import '../widgets/home_kpi_cards_widget.dart';
+import '../widgets/income_category_breakdown_widget.dart';
+import '../widgets/income_graph_widget.dart';
+import '../widgets/referral_summary_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,16 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     final controller = Get.put(HomeController());
+    final notificationController = Get.isRegistered<NotificationController>()
+        ? Get.find<NotificationController>()
+        : Get.put(
+            NotificationController(
+              notificationRepo: NotificationRepoImpl(
+                apiClient: Get.find<ApiClient>(),
+              ),
+              authStorageService: Get.find<AuthStorageService>(),
+            ),
+          );
 
     return Scaffold(
       appBar: PreferredSize(
@@ -40,7 +52,9 @@ class HomeScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.45),
+                      constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth * 0.45,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -81,10 +95,7 @@ class HomeScreen extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 1,
-                          ),
+                          border: Border.all(color: Colors.white, width: 1),
                         ),
                         padding: const EdgeInsets.all(1),
                         child: ClipOval(
@@ -101,6 +112,69 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           actions: [
+            // Notification Icon
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: CircleAvatar(
+                backgroundColor: Colors.grey[850],
+                child: IconButton(
+                  onPressed: () {
+                    // Navigate to notification screen
+                    Get.to(
+                      () => const NotificationScreen(),
+                      transition: Transition.fadeIn,
+                      duration: const Duration(milliseconds: 50),
+                    );
+                  },
+                  icon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Image.asset(
+                        'assets/icons/notification.png',
+                        width: 24,
+                        height: 24,
+                      ),
+                      Obx(() {
+                        final unread = notificationController.unreadCount.value;
+                        if (unread <= 0) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Positioned(
+                          top: -6,
+                          right: -8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 1,
+                            ),
+                            constraints: const BoxConstraints(minWidth: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.leagueBackgroundGrey,
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              unread > 99 ? '99+' : unread.toString(),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Create League Icon
             Padding(
               padding: const EdgeInsets.only(right: 12),
               child: CircleAvatar(
@@ -126,43 +200,18 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const CustomSearchBar(),
-                const SizedBox(height: 15),
-
-                // Show search results when searching, otherwise show regular content
                 Obx(() {
-                  final controller = Get.find<HomeController>();
-
-                  if (controller.isSearching.value) {
-                    return const SearchResultsWidget();
-                  }
-
-                  // Show shimmer loaders while loading
                   if (controller.isLoading.value) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Text(
-                            "Game Reminder",
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        GameReminderShimmer(),
+                        HomeKpiCardsShimmer(),
                         SizedBox(height: 20),
-                        LeagueUpdateShimmer(),
+                        IncomeGraphShimmer(),
                         SizedBox(height: 20),
-                        NextMatchShimmer(),
+                        IncomeCategoryBreakdownShimmer(),
                         SizedBox(height: 20),
-                        QuickStatsShimmer(),
-                        SizedBox(height: 20),
-                        FixturesShimmer(),
+                        ReferralSummaryShimmer(),
                       ],
                     );
                   }
@@ -170,27 +219,13 @@ class HomeScreen extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Text(
-                          "Game Reminder",
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      GameReminderWidget(),
+                      HomeKpiCardsWidget(),
                       SizedBox(height: 20),
-                      LeagueUpdateWidget(),
+                      IncomeGraphWidget(),
                       SizedBox(height: 20),
-                      NextMatchWidget(),
+                      IncomeCategoryBreakdownWidget(),
                       SizedBox(height: 20),
-                      QuickStatsWidget(),
-                      SizedBox(height: 20),
-                      FixturesWidget(),
+                      ReferralSummaryWidget(),
                     ],
                   );
                 }),

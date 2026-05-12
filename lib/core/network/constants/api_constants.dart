@@ -1,8 +1,9 @@
 class ApiConstants {
   /// [Base Configuration]
   // static const String baseDomain = 'https://karlfive223-backend.onrender.com';
-  static const String baseDomain = 'http://72.61.161.196:5003';
-  // static const String baseDomain = 'http://10.10.5.67:5002';
+  // static const String baseDomain = 'http://72.61.161.196:5003';
+  static const String baseDomain = 'http://10.10.5.67:5002';
+  // static const String baseDomain = 'https://kxddjm4g-5002.inc1.devtunnels.ms';
   // static const String baseDomain = 'https://api.centralpadelleague.com';
 
   static const String baseUrl = '$baseDomain/api/v1';
@@ -30,6 +31,7 @@ class ApiConstants {
   static NotificationEndpoints get notification => NotificationEndpoints();
   static ReportEndpoints get report => ReportEndpoints();
   static EventEndpoints get event => EventEndpoints();
+  static CouponEndpoints get coupon => CouponEndpoints();
 
   static get team => null;
 
@@ -64,6 +66,7 @@ class NotificationEndpoints {
 
   final String getnotifications = '$_base/getnotifications';
   final String markAllAsRead = '$_base/mark-all-as-read';
+  final String sendNotification = '$_base/send-notification';
 
   String getNotificationsByUserId(String userId) => '$_base/$userId';
 }
@@ -93,4 +96,13 @@ class EventEndpoints {
   String approveEvent(String eventId) => '$_base/approve/$eventId';
 
   String rejectEvent(String eventId) => '$_base/decline/$eventId';
+}
+
+class CouponEndpoints {
+  static const String _base = '${ApiConstants.baseUrl}/coupon';
+
+  final String manageAll = '$_base/manage/all';
+  final String create = '$_base/create';
+
+  String stopCoupon(String id) => '$_base/$id/stop';
 }
