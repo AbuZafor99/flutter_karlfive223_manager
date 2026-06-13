@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/network/api_client.dart';
 import '../../models/standing_model.dart';
@@ -27,7 +28,10 @@ class _StandingTabState extends State<StandingTab> {
   @override
   void initState() {
     super.initState();
-    _repository = LeagueRepositoryImpl(apiClient: ApiClient());
+    final apiClient = Get.isRegistered<ApiClient>()
+        ? Get.find<ApiClient>()
+        : Get.put(ApiClient());
+    _repository = LeagueRepositoryImpl(apiClient: apiClient);
 
     // Create a copy of the standings data for editing
     editableStandingsData = widget.standingsData

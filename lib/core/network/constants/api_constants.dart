@@ -2,9 +2,9 @@ class ApiConstants {
   /// [Base Configuration]
   // static const String baseDomain = 'https://karlfive223-backend.onrender.com';
   // static const String baseDomain = 'http://72.61.161.196:5003';
-  static const String baseDomain = 'http://10.10.5.67:5002';
-  // static const String baseDomain = 'https://kxddjm4g-5002.inc1.devtunnels.ms';
-  // static const String baseDomain = 'https://api.centralpadelleague.com';
+  // static const String baseDomain = 'http://10.10.5.67:5002';
+  // static const String baseDomain = 'https://pr7m9mtd-5002.asse.devtunnels.ms';
+  static const String baseDomain = 'https://api.centralpadelleague.com';
 
   static const String baseUrl = '$baseDomain/api/v1';
 

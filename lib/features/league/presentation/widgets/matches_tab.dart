@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/network/api_client.dart';
@@ -58,7 +59,10 @@ class _MatchCardState extends State<_MatchCard> {
   @override
   void initState() {
     super.initState();
-    _repository = LeagueRepositoryImpl(apiClient: ApiClient());
+    final apiClient = Get.isRegistered<ApiClient>()
+        ? Get.find<ApiClient>()
+        : Get.put(ApiClient());
+    _repository = LeagueRepositoryImpl(apiClient: apiClient);
 
     _arenaController = TextEditingController(text: widget.match.venueName);
     _scoreController = TextEditingController(
@@ -531,39 +535,51 @@ class _MatchCardState extends State<_MatchCard> {
   }
 
   Widget _buildTeamDisplay(String logoPath, String name) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(25),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(4),
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child:
+                (logoPath.startsWith('http') || logoPath.startsWith('https'))
+                ? Image.network(
+                    logoPath,
+                    width: 40,
+                    height: 40,
+                    errorBuilder: (_, __, ___) => Image.asset(
+                      'assets/images/avatar.png',
+                      width: 40,
+                      height: 40,
+                    ),
+                  )
+                : Image.asset(
+                    logoPath.isNotEmpty
+                        ? logoPath
+                        : 'assets/images/avatar.png',
+                    width: 40,
+                    height: 40,
+                    errorBuilder: (_, __, ___) => Image.asset(
+                      'assets/images/avatar.png',
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),
           ),
-          child: (logoPath.startsWith('http') || logoPath.startsWith('https'))
-              ? Image.network(
-                  logoPath,
-                  width: 40,
-                  height: 40,
-                  errorBuilder: (_, __, ___) => Image.asset(
-                    'assets/images/avatar.png',
-                    width: 40,
-                    height: 40,
-                  ),
-                )
-              : Image.asset(
-                  logoPath.isNotEmpty ? logoPath : 'assets/images/avatar.png',
-                  width: 40,
-                  height: 40,
-                  errorBuilder: (_, __, ___) => Image.asset(
-                    'assets/images/avatar.png',
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-        ),
-        const SizedBox(height: 8),
-        Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ],
+      ),
     );
   }
 
